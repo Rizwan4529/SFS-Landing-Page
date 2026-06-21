@@ -39,13 +39,15 @@ export function GoldArcSvg({ animated = false, className }: GoldArcSvgProps) {
         className={animated ? 'animate-arc-draw' : undefined}
       />
       {animated && (
-        <g transform="translate(600 198)" className="animate-glint-pulse">
-          <circle r="4.5" fill="#fff6da" />
-          <path
-            d="M0 -16 L2 -3 L16 0 L2 3 L0 16 L-2 3 L-16 0 L-2 -3 Z"
-            fill="#fbe6a6"
-            opacity="0.95"
-          />
+        <g transform="translate(600 198)">
+          <g className="animate-glint-pulse">
+            <circle r="4.5" fill="#fff6da" />
+            <path
+              d="M0 -16 L2 -3 L16 0 L2 3 L0 16 L-2 3 L-16 0 L-2 -3 Z"
+              fill="#fbe6a6"
+              opacity="0.95"
+            />
+          </g>
         </g>
       )}
     </svg>

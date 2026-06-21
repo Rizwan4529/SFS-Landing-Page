@@ -1,17 +1,29 @@
-import { Reveal } from '../components/Reveal'
-import { ParallaxImage } from '../components/ParallaxImage'
+import { Reveal } from "../components/Reveal";
+import { ParallaxImage } from "../components/ParallaxImage";
+import { PurposeBubbles } from "../components/PurposeBubbles";
 
-const TAGS = ['Participation', 'Education', 'Rewards credits', 'Marketing support']
+const TAGS = [
+  "Participation",
+  "Education",
+  "Rewards credits",
+  "Marketing support",
+];
 
 export function Introducing() {
   return (
-    <section id="about" className="section-anchor relative overflow-hidden bg-bg-alt px-gutter py-[150px]">
+    <section
+      id="about"
+      className="section-anchor relative min-h-0 overflow-hidden bg-bg-alt px-gutter py-[150px] lg:min-h-[560px]"
+    >
       <ParallaxImage
         src="/assets/world-slate.png"
         speed={0.04}
-        className="pointer-events-none absolute top-1/2 left-1/2 w-[96%] max-w-[1300px] -translate-x-1/2 -translate-y-1/2 opacity-50"
+        className="w-[96%] max-w-[1300px] opacity-50"
       />
-      <div className="relative mx-auto max-w-[920px] text-center">
+
+      <PurposeBubbles variant="platform" theme="light" />
+
+      <div className="relative z-10 mx-auto max-w-[920px] text-center">
         <Reveal>
           <span className="mb-[22px] inline-block text-[13px] font-bold tracking-[2px] text-gold-dark uppercase">
             Introducing SFS
@@ -24,9 +36,10 @@ export function Introducing() {
         </Reveal>
         <Reveal delay={0.12}>
           <p className="mx-auto mt-[30px] max-w-[660px] text-xl leading-[1.7] text-muted">
-            Instead of focusing on a single challenge, SFS lets you explore multiple campaign
-            categories based on your own needs — campaign participation, education, rewards credits,
-            and centralized marketing support, together in one place.
+            Instead of focusing on a single challenge, SFS lets you explore
+            multiple campaign categories based on your own needs — campaign
+            participation, education, rewards credits, and centralized marketing
+            support, together in one place.
           </p>
         </Reveal>
         <Reveal delay={0.18}>
@@ -43,5 +56,5 @@ export function Introducing() {
         </Reveal>
       </div>
     </section>
-  )
+  );
 }

@@ -114,7 +114,7 @@ export function Categories() {
                   src="/assets/world-white.png"
                   alt=""
                   aria-hidden="true"
-                  className="pointer-events-none absolute -top-[30px] -right-[60px] w-[420px] opacity-12"
+                  className="pointer-events-none absolute top-1/2 left-1/2 w-[min(140%,420px)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-12"
                 />
                 <CategoryIcon className="relative h-[54px] w-[54px] rounded-[9px] border border-gold/30 bg-gold/12">
                   {cat.icon}

@@ -44,8 +44,8 @@ export function HowItWorks() {
       <ParallaxImage
         src="/assets/world-white.png"
         speed={0.05}
-        base="translate(-50%,0)"
-        className="pointer-events-none absolute top-[14%] left-1/2 w-[110%] max-w-[1400px] -translate-x-1/2 opacity-8"
+        positionClassName="absolute left-1/2 top-[14%] -translate-x-1/2"
+        className="w-[110%] max-w-[1400px] opacity-8"
       />
 
       <div className="relative mx-auto max-w-[760px]">

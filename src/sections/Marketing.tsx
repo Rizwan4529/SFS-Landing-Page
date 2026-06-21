@@ -7,7 +7,7 @@ export function Marketing() {
       <ParallaxImage
         src="/assets/world-white.png"
         speed={0.07}
-        className="pointer-events-none absolute top-1/2 left-1/2 w-[120%] max-w-[1500px] -translate-x-1/2 -translate-y-1/2 opacity-10"
+        className="w-[120%] max-w-[1500px] opacity-10"
       />
       <div
         aria-hidden="true"

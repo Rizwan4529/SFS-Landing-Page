@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '../lib/cn'
+import { CardBorderTrace } from './CardBorderTrace'
 
 interface CategoryCardProps {
   children: ReactNode
@@ -27,11 +28,12 @@ export function CategoryCard({
       <article
         data-cat
         className={cn(
-          'group interactive-card relative h-full w-full',
+          'group interactive-card relative h-full w-full overflow-hidden',
           className,
           innerClassName ?? 'flex flex-col justify-between',
         )}
       >
+        <CardBorderTrace />
         {children}
       </article>
     </div>

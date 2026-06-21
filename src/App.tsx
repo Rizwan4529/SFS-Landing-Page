@@ -1,4 +1,5 @@
 import { useScrollEffects } from './hooks/useScrollEffects'
+import { CursorGlow } from './components/CursorGlow'
 import { Header } from './components/Header'
 import { Hero } from './sections/Hero'
 import { Problem } from './sections/Problem'
@@ -16,6 +17,7 @@ function App() {
 
   return (
     <>
+      <CursorGlow />
       <a href="#main" className="skip-link">
         Skip to content
       </a>

@@ -48,8 +48,7 @@ export function useScrollEffects() {
           const sp = parseFloat(node.getAttribute('data-parallax') || '0') || 0
           const r = node.getBoundingClientRect()
           const center = r.top + r.height / 2 - vh / 2
-          const base = node.getAttribute('data-px-base') || ''
-          node.style.transform = `${base} translate3d(0,${(center * sp).toFixed(1)}px,0)`
+          node.style.transform = `translate3d(0,${(center * sp).toFixed(1)}px,0)`
         })
       }
 

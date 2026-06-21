@@ -1,11 +1,55 @@
 import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Menu, X } from 'lucide-react'
 import { NAV_LINKS, WAITLIST_ID } from '../lib/nav'
 import { scrollToId } from '../lib/cn'
 import { GoldButton } from './GoldButton'
 
+const MENU_EASE = [0.16, 0.84, 0.34, 1] as const
+
+const menuPanelVariants = {
+  hidden: { opacity: 0, y: -16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.38, ease: MENU_EASE },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.28, ease: MENU_EASE },
+  },
+}
+
+const menuListVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { staggerChildren: 0.04, staggerDirection: -1 },
+  },
+}
+
+const menuItemVariants = {
+  hidden: { opacity: 0, x: -14 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.32, ease: MENU_EASE },
+  },
+  exit: {
+    opacity: 0,
+    x: -10,
+    transition: { duration: 0.2, ease: MENU_EASE },
+  },
+}
+
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const reduceMotion = useReducedMotion()
 
   function handleNav(href: string) {
     setMenuOpen(false)
@@ -76,37 +120,80 @@ export function Header() {
         aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         onClick={() => setMenuOpen((o) => !o)}
       >
-        {menuOpen ? <X size={26} /> : <Menu size={26} />}
+        <span className="relative block h-[26px] w-[26px]">
+          <AnimatePresence mode="wait" initial={false}>
+            {menuOpen ? (
+              <motion.span
+                key="close"
+                className="absolute inset-0 flex items-center justify-center"
+                initial={reduceMotion ? false : { opacity: 0, rotate: -45, scale: 0.85 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, rotate: 45, scale: 0.85 }}
+                transition={{ duration: 0.22, ease: MENU_EASE }}
+              >
+                <X size={26} aria-hidden="true" />
+              </motion.span>
+            ) : (
+              <motion.span
+                key="open"
+                className="absolute inset-0 flex items-center justify-center"
+                initial={reduceMotion ? false : { opacity: 0, rotate: 45, scale: 0.85 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, rotate: -45, scale: 0.85 }}
+                transition={{ duration: 0.22, ease: MENU_EASE }}
+              >
+                <Menu size={26} aria-hidden="true" />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </span>
       </button>
 
-      {menuOpen && (
-        <div
-          id="mobile-menu"
-          className="absolute inset-x-0 top-full border-b border-line bg-white/95 px-6 py-6 shadow-lg backdrop-blur-md lg:hidden"
-        >
-          <nav className="flex flex-col gap-4" aria-label="Mobile">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => {
-                  e.preventDefault()
-                  handleNav(link.href)
-                }}
-                className="text-base font-medium text-ink-heading"
-              >
-                {link.label}
-              </a>
-            ))}
-            <GoldButton
-              className="mt-2 w-full"
-              onClick={() => handleNav(`#${WAITLIST_ID}`)}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            key="mobile-menu"
+            id="mobile-menu"
+            className="absolute inset-x-0 top-full overflow-hidden border-b border-line bg-white/95 px-6 py-6 shadow-lg backdrop-blur-md lg:hidden"
+            initial={reduceMotion ? false : 'hidden'}
+            animate={reduceMotion ? undefined : 'visible'}
+            exit={reduceMotion ? undefined : 'exit'}
+            variants={menuPanelVariants}
+          >
+            <motion.nav
+              className="flex flex-col gap-4"
+              aria-label="Mobile"
+              initial={reduceMotion ? false : 'hidden'}
+              animate={reduceMotion ? undefined : 'visible'}
+              exit={reduceMotion ? undefined : 'exit'}
+              variants={menuListVariants}
             >
-              Join the waitlist
-            </GoldButton>
-          </nav>
-        </div>
-      )}
+              {NAV_LINKS.map((link) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNav(link.href)
+                  }}
+                  className="text-base font-medium text-ink-heading"
+                  variants={menuItemVariants}
+                >
+                  {link.label}
+                </motion.a>
+              ))}
+              <motion.div variants={menuItemVariants} className="mt-2">
+                <GoldButton
+                  className="w-full"
+                  onClick={() => handleNav(`#${WAITLIST_ID}`)}
+                >
+                  Join the waitlist
+                </GoldButton>
+              </motion.div>
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   )
 }

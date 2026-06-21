@@ -10,7 +10,8 @@ export function Closing() {
       <ParallaxImage
         src="/assets/world-white.png"
         speed={0.05}
-        className="pointer-events-none absolute top-[30%] left-1/2 w-[118%] max-w-[1500px] -translate-x-1/2 -translate-y-1/2 opacity-8"
+        positionClassName="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2"
+        className="w-[118%] max-w-[1500px] opacity-8"
       />
       <div
         aria-hidden="true"
@@ -73,15 +74,15 @@ export function Closing() {
         </Reveal>
       </div>
 
-      <footer className="relative mt-[120px] border-t border-white/10 px-0 py-12 pb-10">
-        <div className="mx-auto flex max-w-page flex-wrap items-center justify-between gap-7">
-          <div className="flex flex-col gap-3.5">
+      <footer className="relative mt-[120px] border-t border-white/10 py-12 pb-10">
+        <div className="mx-auto flex max-w-page flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:gap-7 md:text-left">
+          <div className="flex flex-col items-center gap-3.5 md:items-start">
             <img src="/assets/logo-light.png" alt="SFS" className="h-[38px] w-auto" />
             <span className="text-[15px] tracking-wide text-[rgba(180,194,222,0.7)]">
               Funding goals, simplified.
             </span>
           </div>
-          <div className="flex flex-col gap-2 text-right">
+          <div className="flex flex-col items-center gap-2 md:items-end md:text-right">
             <a
               href="https://sharefundsystem.com"
               className="font-display text-base font-semibold tracking-wide text-gold"

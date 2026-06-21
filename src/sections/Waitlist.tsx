@@ -12,7 +12,7 @@ export function WaitlistSection() {
               src="/assets/world-white.png"
               alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute -top-[60px] -right-20 w-[420px] opacity-10"
+              className="pointer-events-none absolute top-1/2 left-1/2 w-[min(140%,480px)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-10"
             />
             <div className="relative text-center">
               <span className="mb-[18px] inline-block text-[13px] font-bold tracking-[2px] text-gold uppercase">

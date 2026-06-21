@@ -2,6 +2,7 @@ import { Reveal } from "../components/Reveal";
 import { ParallaxImage } from "../components/ParallaxImage";
 import { GoldArcSvg } from "../components/GoldArcSvg";
 import { GoldButton } from "../components/GoldButton";
+import { PurposeBubbles } from "../components/PurposeBubbles";
 import { WAITLIST_ID } from "../lib/nav";
 import { scrollToId } from "../lib/cn";
 
@@ -20,7 +21,7 @@ export function Hero() {
       <ParallaxImage
         src="/assets/world-white.png"
         speed={0.05}
-        className="pointer-events-none absolute top-1/2 left-1/2 w-[118%] max-w-[1500px] -translate-x-1/2 -translate-y-1/2 opacity-16"
+        className="w-[118%] max-w-[1500px] opacity-16"
       />
 
       <svg
@@ -79,12 +80,19 @@ export function Hero() {
 
       <GoldArcSvg
         animated
-        className="pointer-events-none absolute -top-20 left-1/2 h-auto w-[min(1180px,98%)] -translate-x-1/2"
+        className="pointer-events-none absolute top-[20px] left-1/2 h-auto w-[min(1180px,108%)] -translate-x-1/2 md:-top-10 md:w-[min(1180px,98%)] lg:-top-20"
       />
 
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_40%,transparent_55%,rgba(4,11,28,0.55)_100%)]"
+      />
+
+      <PurposeBubbles
+        variant="categories"
+        theme="dark"
+        className="z-[3]"
+        showLines={false}
       />
 
       <div
