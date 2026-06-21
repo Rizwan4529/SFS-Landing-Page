@@ -192,6 +192,16 @@
   transform: none;
 }
 
+/* Card grid wrappers: reveal with opacity only so inner hover lift stays smooth */
+.card-reveal[data-reveal] {
+  transform: none;
+  transition: opacity 1.05s cubic-bezier(0.16, 0.84, 0.34, 1);
+}
+
+.card-reveal[data-reveal][data-shown] {
+  transform: none;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

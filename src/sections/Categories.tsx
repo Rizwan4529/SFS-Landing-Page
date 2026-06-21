@@ -107,7 +107,8 @@ export function Categories() {
             cat.featured ? (
               <CategoryCard
                 key={cat.title}
-                className={`${cat.col} ${cat.minH} overflow-hidden rounded-card border border-navy-border bg-gradient-to-br from-navy to-navy-card p-9 shadow-[0_24px_50px_-34px_rgba(12,31,68,0.6)]`}
+                gridClassName={`${cat.col} ${cat.minH}`}
+                className="overflow-hidden rounded-card border border-navy-border bg-gradient-to-br from-navy to-navy-card p-9 shadow-[0_24px_50px_-34px_rgba(12,31,68,0.6)]"
               >
                 <img
                   src="/assets/world-white.png"
@@ -127,7 +128,8 @@ export function Categories() {
               <CategoryCard
                 key={cat.title}
                 delay={cat.delay}
-                className={`${cat.col} ${cat.minH} rounded-card border border-line bg-bg-card p-7 md:p-[30px_28px]`}
+                gridClassName={`${cat.col} ${cat.minH}`}
+                className="rounded-card border border-line bg-bg-card p-7 md:p-[30px_28px]"
               >
                 <CategoryIcon className="h-[50px] w-[50px] rounded-[9px] border border-border-gold bg-bg-icon">
                   {cat.icon}
@@ -141,7 +143,8 @@ export function Categories() {
           )}
 
           <CategoryCard
-            className="col-span-12 overflow-hidden rounded-card border border-border-gold bg-gradient-to-br from-bg-gold to-bg-gold-alt p-9 md:px-10"
+            gridClassName="col-span-12"
+            className="overflow-hidden rounded-card border border-border-gold bg-gradient-to-br from-bg-gold to-bg-gold-alt p-9 md:px-10"
             innerClassName="flex flex-wrap items-center gap-8 md:flex-nowrap"
           >
             <CategoryIcon className="h-[62px] w-[62px] shrink-0 rounded-[10px] bg-gradient-gold shadow-[0_10px_26px_-10px_rgba(207,159,52,0.7)]">
