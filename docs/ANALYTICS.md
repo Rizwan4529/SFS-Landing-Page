@@ -22,7 +22,7 @@ The landing page tracks market validation data through two channels:
 
 ### Configure the site
 
-Add to your production `.env` file:
+Add to `.env` (local) and the same keys in **Vercel → Settings → Environment Variables** for production:
 
 ```
 VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
@@ -72,7 +72,7 @@ UTM parameters are also saved with each waitlist signup in the Google Sheet.
 ### Debug in development
 
 1. Install the [GA Debugger Chrome extension](https://chrome.google.com/webstore/detail/google-analytics-debugger)
-2. Set `VITE_GA_MEASUREMENT_ID` in `.env.local`
+2. Set `VITE_GA_MEASUREMENT_ID` in `.env`
 3. Open GA4 → **Admin** → **DebugView** to see live events
 
 ---

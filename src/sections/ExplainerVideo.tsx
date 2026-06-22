@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Reveal } from '../components/Reveal'
 import {
+  EXPLAINER_VIDEO_DRIVE_VIEW_URL,
   EXPLAINER_VIDEO_ID,
   EXPLAINER_VIDEO_SRC,
   EXPLAINER_VIDEO_TITLE,
@@ -14,12 +15,10 @@ const PAUSE_VISIBLE_RATIO = 0.15
 export function ExplainerVideo() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
   const hasTrackedPlayRef = useRef(false)
   const userPausedRef = useRef(false)
   const programmaticPauseRef = useRef(false)
   const [loadError, setLoadError] = useState(false)
-  const [iframeSrc, setIframeSrc] = useState<string | null>(null)
   const useDriveEmbed = isDriveVideoEmbed(EXPLAINER_VIDEO_SRC)
 
   const trackEngagement = useCallback(() => {
@@ -40,13 +39,7 @@ export function ExplainerVideo() {
   }, [])
 
   const tryAutoplay = useCallback(() => {
-    if (userPausedRef.current) return
-
-    if (useDriveEmbed) {
-      setIframeSrc(`${EXPLAINER_VIDEO_SRC}${EXPLAINER_VIDEO_SRC.includes('?') ? '&' : '?'}autoplay=1`)
-      trackEngagement()
-      return
-    }
+    if (userPausedRef.current || useDriveEmbed) return
 
     const video = videoRef.current
     if (!video || (!video.paused && !video.ended)) return
@@ -61,6 +54,8 @@ export function ExplainerVideo() {
   }, [trackEngagement, useDriveEmbed])
 
   useEffect(() => {
+    if (useDriveEmbed) return
+
     const section = sectionRef.current
     if (!section) return
 
@@ -68,17 +63,12 @@ export function ExplainerVideo() {
       ([entry]) => {
         const ratio = entry.intersectionRatio
         const shouldPlay = entry.isIntersecting && ratio >= AUTOPLAY_VISIBLE_RATIO
-        const shouldPause =
-          !entry.isIntersecting || ratio < PAUSE_VISIBLE_RATIO
+        const shouldPause = !entry.isIntersecting || ratio < PAUSE_VISIBLE_RATIO
 
         if (shouldPlay) {
           tryAutoplay()
         } else if (shouldPause) {
-          if (useDriveEmbed) {
-            setIframeSrc(null)
-          } else {
-            pauseVideo()
-          }
+          pauseVideo()
         }
       },
       { threshold: [0, PAUSE_VISIBLE_RATIO, AUTOPLAY_VISIBLE_RATIO, 0.75] },
@@ -137,21 +127,14 @@ export function ExplainerVideo() {
         <div className="relative overflow-hidden rounded-panel border border-navy-border-alt bg-gradient-to-br from-navy to-navy-card p-3 shadow-[0_40px_80px_-40px_rgba(12,31,68,0.55)] sm:p-4">
           <div className="relative aspect-video overflow-hidden rounded-brand bg-black">
             {useDriveEmbed ? (
-              iframeSrc ? (
-                <iframe
-                  ref={iframeRef}
-                  src={iframeSrc}
-                  className="absolute inset-0 h-full w-full border-0"
-                  allow="autoplay; fullscreen"
-                  allowFullScreen
-                  title="SFS platform explainer video"
-                />
-              ) : (
-                <div
-                  className="absolute inset-0 flex items-center justify-center bg-black"
-                  aria-hidden="true"
-                />
-              )
+              <iframe
+                src={EXPLAINER_VIDEO_SRC}
+                className="absolute inset-0 h-full w-full border-0"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+                title="SFS platform explainer video"
+                onLoad={trackEngagement}
+              />
             ) : (
               <video
                 ref={videoRef}
@@ -168,11 +151,19 @@ export function ExplainerVideo() {
               />
             )}
             {loadError && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/80 p-6 text-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/80 p-6 text-center">
                 <p className="m-0 text-sm text-white/90">
                   The video could not be loaded. Please hard-refresh the page (Ctrl+Shift+R) and try
                   again.
                 </p>
+                <a
+                  href={EXPLAINER_VIDEO_DRIVE_VIEW_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-semibold text-gold-light underline"
+                >
+                  Open video in Google Drive
+                </a>
               </div>
             )}
           </div>

@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment secrets (commit .env.example only)
+# Environment — use .env locally; set the same keys in Vercel for production
 .env
 .env.local
 .env.development
