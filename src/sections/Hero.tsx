@@ -5,13 +5,14 @@ import { GoldButton } from "../components/GoldButton";
 import { PurposeBubbles } from "../components/PurposeBubbles";
 import { WAITLIST_ID } from "../lib/nav";
 import { scrollToId } from "../lib/cn";
+import { trackCtaClick } from "../lib/analytics";
 
 export function Hero() {
   return (
     <section
       id="top"
       aria-labelledby="hero-heading"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-navy-hero px-6 pt-[140px] pb-[90px]"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-navy-hero px-6 pt-[calc(var(--site-chrome-height)+180px)] pb-[90px]"
     >
       <div
         aria-hidden="true"
@@ -80,7 +81,7 @@ export function Hero() {
 
       <GoldArcSvg
         animated
-        className="pointer-events-none absolute top-[20px] left-1/2 h-auto w-[min(1180px,108%)] -translate-x-1/2 md:-top-10 md:w-[min(1180px,98%)] lg:-top-20"
+        className="pointer-events-none absolute top-[calc(var(--arch-height)+var(--hero-arc-offset))] left-1/2 z-[4] h-auto w-[min(1180px,108%)] -translate-x-1/2 md:w-[min(1180px,98%)]"
       />
 
       <div
@@ -100,13 +101,17 @@ export function Hero() {
         className="relative z-5 flex max-w-[880px] flex-col items-center text-center"
       >
         <Reveal>
-          <div className="mb-[30px] inline-flex items-center gap-2.5 rounded-full border border-gold/40 bg-gold/7 px-4 py-[7px]">
-            <span className="h-[7px] w-[7px] rounded-full bg-gold shadow-[0_0_10px_#e8c25a]" />
-            <span className="text-[13px] font-semibold tracking-[1.4px] text-gold-chip uppercase">
-              Pre-launch · Join the waitlist
+          <div className="mb-5 inline-flex items-center gap-2.5 rounded-full border border-gold/50 bg-gold/10 px-5 py-2 shadow-[0_0_24px_-8px_rgba(207,159,52,0.5)]">
+            <span className="h-2 w-2 rounded-full bg-gold shadow-[0_0_10px_#e8c25a] animate-glow-pulse" />
+            <span className="text-[13px] font-bold tracking-[1.5px] text-gold-chip uppercase">
+              Pre-launch · Platform launching soon
             </span>
           </div>
         </Reveal>
+
+        {/* <Reveal delay={0.05}>
+          <PreLaunchCallout variant="hero" className="mb-7 w-full max-w-[640px]" />
+        </Reveal> */}
 
         <Reveal delay={0.08}>
           <h1
@@ -119,8 +124,15 @@ export function Hero() {
           </h1>
         </Reveal>
 
+        <Reveal delay={0.12}>
+          <p className="mx-auto mt-4 max-w-[620px] text-[clamp(16px,1.4vw,19px)] font-semibold leading-[1.55] text-gold-chip">
+            Join the waitlist today — get early access when Share Fund System
+            launches.
+          </p>
+        </Reveal>
+
         <Reveal delay={0.16}>
-          <p className="mt-7 max-w-[620px] text-[clamp(17px,1.5vw,20px)] leading-[1.62] text-[rgba(214,224,244,0.82)]">
+          <p className="mt-5 max-w-[620px] text-[clamp(17px,1.5vw,20px)] leading-[1.62] text-[rgba(214,224,244,0.82)]">
             SFS is a campaign platform that helps individuals and families work
             toward the financial goals that matter most — through participation,
             education, rewards, and centralized marketing support.
@@ -133,10 +145,12 @@ export function Hero() {
               href={`#${WAITLIST_ID}`}
               onClick={(e) => {
                 e.preventDefault();
+                trackCtaClick("hero");
                 scrollToId(WAITLIST_ID);
               }}
+              className="px-9 py-[18px] text-[17px] shadow-[0_16px_44px_rgba(207,159,52,0.48)] hover:shadow-[0_22px_52px_rgba(207,159,52,0.62)]"
             >
-              Join the waitlist
+              Join the waitlist for early access
               <svg
                 width="18"
                 height="18"
@@ -166,8 +180,9 @@ export function Hero() {
         </Reveal>
 
         <Reveal delay={0.32}>
-          <p className="mt-[26px] text-sm tracking-wide text-[rgba(180,194,222,0.66)]">
-            No payment required. Get launch updates and early access.
+          <p className="mt-[26px] max-w-[520px] text-sm leading-relaxed tracking-wide text-[rgba(180,194,222,0.72)]">
+            No payment required. Free to join — you&apos;ll receive launch
+            updates and platform access when we go live.
           </p>
         </Reveal>
       </div>

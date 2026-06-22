@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '../lib/cn'
+import { getAttribution } from '../lib/attribution'
+import { trackWaitlistSignup } from '../lib/analytics'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -38,18 +40,33 @@ export function WaitlistForm() {
 
     setErr('')
     setStatus('submitting')
+
+    const attribution = getAttribution()
+    const payload = {
+      name: trimmedName,
+      email: trimmedEmail,
+      signedUpAt: new Date().toISOString(),
+      utmSource: attribution.utmSource,
+      utmMedium: attribution.utmMedium,
+      utmCampaign: attribution.utmCampaign,
+      utmContent: attribution.utmContent,
+      referrer: attribution.referrer,
+      landingPage: attribution.landingPage,
+    }
+
     try {
       if (ENDPOINT) {
         const res = await fetch(ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ name: trimmedName, email: trimmedEmail }),
+          body: JSON.stringify(payload),
         })
         if (!res.ok) throw new Error(`Request failed: ${res.status}`)
       } else {
         console.warn('VITE_WAITLIST_ENDPOINT is not set. Submission was not sent anywhere.')
         await new Promise((r) => setTimeout(r, 600))
       }
+      trackWaitlistSignup()
       setFirstName(trimmedName.split(' ')[0] || 'there')
       setStatus('success')
       requestAnimationFrame(() => successRef.current?.focus())
@@ -86,7 +103,8 @@ export function WaitlistForm() {
           You&apos;re on the list, {firstName}.
         </h3>
         <p className="max-w-[400px] text-base leading-relaxed text-[rgba(206,218,242,0.78)]">
-          Thanks for joining. We&apos;ll send launch updates and early access straight to your inbox.
+          Thanks for joining. We&apos;ll email you launch updates — you&apos;ll get early access when
+          Share Fund System goes live.
         </p>
       </div>
     )
@@ -157,8 +175,8 @@ export function WaitlistForm() {
         </p>
       )}
 
-      <p className="m-0 mt-1.5 text-center text-[13px] text-[rgba(180,194,222,0.6)]">
-        No payment required. Get launch updates and early access.
+      <p className="m-0 mt-1.5 text-center text-[13px] leading-relaxed text-[rgba(180,194,222,0.65)]">
+        Free to join. Early access when the platform launches.
       </p>
     </form>
   )

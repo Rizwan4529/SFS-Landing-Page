@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Menu, X } from 'lucide-react'
 import { NAV_LINKS, WAITLIST_ID } from '../lib/nav'
 import { scrollToId } from '../lib/cn'
+import { trackCtaClick } from '../lib/analytics'
 import { GoldButton } from './GoldButton'
 
 const MENU_EASE = [0.16, 0.84, 0.34, 1] as const
@@ -59,7 +60,7 @@ export function Header() {
   return (
     <header
       id="sfs-header"
-      className="fixed inset-x-0 top-0 z-200 flex items-center justify-between px-6 py-[18px] transition-[background,box-shadow,padding] duration-[450ms] ease-[cubic-bezier(0.16,0.84,0.34,1)] md:px-12"
+      className="relative z-10 flex w-full items-center justify-between px-6 py-[18px] transition-[background,box-shadow,padding] duration-[450ms] ease-[cubic-bezier(0.16,0.84,0.34,1)] md:px-12"
     >
       <a
         href="#top"
@@ -104,6 +105,7 @@ export function Header() {
           href={`#${WAITLIST_ID}`}
           onClick={(e) => {
             e.preventDefault()
+            trackCtaClick('header')
             handleNav(`#${WAITLIST_ID}`)
           }}
           className="px-5 py-2.5 text-[14.5px] shadow-[0_6px_20px_rgba(207,159,52,0.32)] hover:shadow-[0_10px_28px_rgba(207,159,52,0.45)]"
@@ -185,7 +187,10 @@ export function Header() {
               <motion.div variants={menuItemVariants} className="mt-2">
                 <GoldButton
                   className="w-full"
-                  onClick={() => handleNav(`#${WAITLIST_ID}`)}
+                  onClick={() => {
+                    trackCtaClick('header')
+                    handleNav(`#${WAITLIST_ID}`)
+                  }}
                 >
                   Join the waitlist
                 </GoldButton>

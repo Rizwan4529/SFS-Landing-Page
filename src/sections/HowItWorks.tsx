@@ -4,33 +4,33 @@ import { ParallaxImage } from '../components/ParallaxImage'
 const STEPS = [
   {
     num: '01',
-    title: 'Create your free account',
+    title: 'Create Your Free Account',
     desc: 'Sign up in moments — no payment required to get started.',
   },
   {
     num: '02',
-    title: 'Choose the category that fits your goal',
-    desc: 'Housing, food, utilities, debt, vehicle, medical, or business growth.',
+    title: 'Choose Your Campaign Category',
+    desc: 'Housing, food, utilities, debt, vehicle, medical, or business growth — pick the goal that fits you.',
   },
   {
     num: '03',
-    title: 'Activate your campaign',
-    desc: 'Launch the campaign built around the goal you care about.',
+    title: 'Learn How To Activate Your Campaign',
+    desc: 'Understand how campaign activation will work when the platform launches — explore the process now during pre-SFS.',
   },
   {
     num: '04',
-    title: 'Track progress from your dashboard',
-    desc: 'See where you stand and stay oriented toward your goal.',
+    title: 'Track Progress From Your Dashboard',
+    desc: 'Once live, you will see where you stand and stay oriented toward your goal from one central dashboard.',
   },
   {
     num: '05',
-    title: 'Earn rewards credits as you participate',
-    desc: 'Participation is recognized with credits you can put to use.',
+    title: 'Earn Rewards Credits',
+    desc: 'Participation will be recognized with credits you can put to use as you engage with the platform.',
   },
   {
     num: '06',
-    title: 'Access educational resources and platform tools',
-    desc: 'Keep learning with guides and tools that support your goals.',
+    title: 'Access Educational Resources',
+    desc: 'Guides, videos, and tools to help you understand your goals and options — available before and after launch.',
   },
 ]
 
@@ -60,7 +60,7 @@ export function HowItWorks() {
               id="how-heading"
               className="m-0 font-display text-[clamp(34px,4.6vw,58px)] leading-[1.06] font-bold tracking-[-1.2px] text-white"
             >
-              Six steps, start to goal.
+              Six steps — learn the journey before launch.
             </h2>
           </Reveal>
         </div>

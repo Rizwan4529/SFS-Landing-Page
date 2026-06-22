@@ -3,6 +3,7 @@ import { ParallaxImage } from '../components/ParallaxImage'
 import { GoldButton } from '../components/GoldButton'
 import { WAITLIST_ID } from '../lib/nav'
 import { scrollToId } from '../lib/cn'
+import { trackCtaClick } from '../lib/analytics'
 
 export function Closing() {
   return (
@@ -51,8 +52,8 @@ export function Closing() {
 
         <Reveal delay={0.1}>
           <p className="mx-auto mt-[30px] max-w-[600px] text-[19px] leading-[1.7] text-[rgba(214,224,244,0.78)]">
-            SFS was created to help individuals and families work toward important financial goals
-            through participation, education, innovation, and community.
+            Share Fund System is launching soon. Join the waitlist now — you&apos;ll get early
+            access when the platform goes live.
           </p>
         </Reveal>
 
@@ -61,6 +62,7 @@ export function Closing() {
             href={`#${WAITLIST_ID}`}
             onClick={(e) => {
               e.preventDefault()
+              trackCtaClick('closing')
               scrollToId(WAITLIST_ID)
             }}
             className="mt-[38px] px-[34px] py-[17px] text-[16.5px]"
@@ -74,7 +76,7 @@ export function Closing() {
         </Reveal>
       </div>
 
-      <footer className="relative mt-[120px] border-t border-white/10 py-12 pb-10">
+      <footer id="site-footer" className="relative mt-[120px] border-t border-white/10 py-12 pb-10">
         <div className="mx-auto flex max-w-page flex-col items-center gap-8 text-center md:flex-row md:items-center md:justify-between md:gap-7 md:text-left">
           <div className="flex flex-col items-center gap-3.5 md:items-start">
             <img src="/assets/logo-light.png" alt="SFS" className="h-[38px] w-auto" />

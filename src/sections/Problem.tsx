@@ -1,6 +1,8 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { Reveal } from '../components/Reveal'
 
+const CHART_HEIGHT = 200
+
 const BARS = [
   { h: 38, bg: 'linear-gradient(180deg,#c9d4e6,#aab9d4)' },
   { h: 55, bg: 'linear-gradient(180deg,#b9c6df,#9aabca)' },
@@ -16,6 +18,27 @@ const BAR_STAGGER = 0.12
 const BAR_DURATION = 0.55
 const CHART_EASE = [0.16, 0.84, 0.34, 1] as const
 
+const VIEWPORT = { once: true, amount: 0.15 as const, margin: '0px 0px -40px 0px' as const }
+
+const barGroupVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: BAR_STAGGER,
+      delayChildren: 0.15,
+    },
+  },
+}
+
+const barVariants = {
+  hidden: { scaleY: 0, opacity: 0.5 },
+  visible: {
+    scaleY: 1,
+    opacity: 1,
+    transition: { duration: BAR_DURATION, ease: CHART_EASE },
+  },
+}
+
 function CostTrendChart() {
   const reduce = useReducedMotion()
   const lineDelay = 0.15 + (BARS.length - 1) * BAR_STAGGER + BAR_DURATION * 0.45
@@ -25,11 +48,11 @@ function CostTrendChart() {
     <motion.div
       initial={reduce ? false : { opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.35 }}
+      viewport={VIEWPORT}
       transition={{ duration: 0.7, ease: CHART_EASE }}
-      className="relative overflow-hidden rounded-[14px] border border-line bg-gradient-to-br from-[#f6f8fc] to-[#eef2f9] px-[34px] py-[38px] shadow-[0_30px_60px_-30px_rgba(12,31,68,0.22)]"
+      className="relative overflow-hidden rounded-[14px] border border-line bg-gradient-to-br from-[#f6f8fc] to-[#eef2f9] px-5 py-8 shadow-[0_30px_60px_-30px_rgba(12,31,68,0.22)] sm:px-[34px] sm:py-[38px]"
     >
-      <div className="relative h-[200px]">
+      <div className="relative h-[200px] w-full">
         <svg
           viewBox="0 0 400 200"
           preserveAspectRatio="none"
@@ -46,7 +69,7 @@ function CostTrendChart() {
             strokeDasharray="2 6"
             initial={reduce ? { pathLength: 1, opacity: 0.7 } : { pathLength: 0, opacity: 0 }}
             whileInView={{ pathLength: 1, opacity: 0.7 }}
-            viewport={{ once: true, amount: 0.35 }}
+            viewport={VIEWPORT}
             transition={{
               pathLength: { duration: reduce ? 0 : 0.75, delay: reduce ? 0 : lineDelay, ease: CHART_EASE },
               opacity: { duration: reduce ? 0 : 0.3, delay: reduce ? 0 : lineDelay },
@@ -54,35 +77,38 @@ function CostTrendChart() {
           />
         </svg>
 
-        <div className="relative z-10 flex h-full items-end gap-[18px]">
-          {BARS.map((bar, i) => (
-            <div key={bar.h} className="flex h-full flex-1 flex-col justify-end overflow-hidden">
+        <motion.div
+          className="absolute inset-0 z-10 flex items-end gap-2.5 sm:gap-[18px]"
+          variants={reduce ? undefined : barGroupVariants}
+          initial={reduce ? false : 'hidden'}
+          whileInView={reduce ? undefined : 'visible'}
+          viewport={VIEWPORT}
+        >
+          {BARS.map((bar, i) => {
+            const barHeight = Math.round((bar.h / 100) * CHART_HEIGHT)
+            return (
               <motion.div
-                className="w-full origin-bottom rounded-t-md"
+                key={i}
+                className="min-h-0 flex-1 origin-bottom rounded-t-md"
                 style={{
-                  height: `${bar.h}%`,
+                  height: barHeight,
                   background: bar.bg,
                   boxShadow: 'glow' in bar ? bar.glow : undefined,
                 }}
-                initial={reduce ? false : { scaleY: 0, opacity: 0.6 }}
-                whileInView={{ scaleY: 1, opacity: 1 }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{
-                  duration: reduce ? 0 : BAR_DURATION,
-                  delay: reduce ? 0 : 0.15 + i * BAR_STAGGER,
-                  ease: CHART_EASE,
-                }}
+                variants={reduce ? undefined : barVariants}
+                initial={reduce ? false : undefined}
+                animate={reduce ? { scaleY: 1, opacity: 1 } : undefined}
               />
-            </div>
-          ))}
-        </div>
+            )
+          })}
+        </motion.div>
       </div>
 
       <motion.div
         className="mt-6 flex items-center gap-2"
         initial={reduce ? false : { opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.35 }}
+        viewport={VIEWPORT}
         transition={{
           duration: reduce ? 0 : 0.5,
           delay: reduce ? 0 : captionDelay,

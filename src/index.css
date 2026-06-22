@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+:root {
+  --site-chrome-height: 122px;
+  --ribbon-gap: 8px;
+  --hero-arc-offset: 0px;
+  /* Mobile: clear fixed header + ribbon. Desktop: user-tuned offset only. */
+  --arch-height: var(--site-chrome-height);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --arch-height: 30px;
+  }
+}
+
 @theme {
   --color-navy-darkest: #06122e;
   --color-navy: #0a1c40;
@@ -55,9 +69,19 @@
     #e8c25a 72%,
     #cf9f34 100%
   );
-  --gradient-navy-hero: linear-gradient(180deg, #06122e 0%, #0a1c40 52%, #0b2049 100%);
+  --gradient-navy-hero: linear-gradient(
+    180deg,
+    #06122e 0%,
+    #0a1c40 52%,
+    #0b2049 100%
+  );
   --gradient-navy-section: linear-gradient(180deg, #06122e, #0a1c40);
-  --gradient-navy-marketing: linear-gradient(135deg, #06122e 0%, #0c2150 55%, #10295e 100%);
+  --gradient-navy-marketing: linear-gradient(
+    135deg,
+    #06122e 0%,
+    #0c2150 55%,
+    #10295e 100%
+  );
   --gradient-navy-closing: linear-gradient(180deg, #06122e, #040c1e);
 }
 
@@ -280,18 +304,24 @@
 }
 
 .section-anchor {
-  scroll-margin-top: 80px;
+  scroll-margin-top: calc(var(--site-chrome-height) + 16px);
 }
 
 /* Purpose category bubbles — Introducing section */
 .purpose-bubble-grid {
-  background-image: radial-gradient(rgba(12, 31, 68, 0.14) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgba(12, 31, 68, 0.14) 1px,
+    transparent 1px
+  );
   background-size: 22px 22px;
   mask-image: linear-gradient(to top, black 20%, transparent 95%);
 }
 
 .purpose-bubble-grid--dark {
-  background-image: radial-gradient(rgba(232, 194, 90, 0.14) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgba(232, 194, 90, 0.14) 1px,
+    transparent 1px
+  );
 }
 
 .purpose-bubble {
@@ -299,7 +329,11 @@
   align-items: center;
   padding: 11px 22px;
   border-radius: 9999px;
-  background: linear-gradient(145deg, rgba(10, 28, 64, 0.92), rgba(18, 48, 102, 0.88));
+  background: linear-gradient(
+    145deg,
+    rgba(10, 28, 64, 0.92),
+    rgba(18, 48, 102, 0.88)
+  );
   border: 1px solid rgba(232, 194, 90, 0.28);
   box-shadow:
     0 8px 28px -8px rgba(12, 31, 68, 0.45),
@@ -433,7 +467,7 @@
   filter: blur(2px);
 }
 
-.cursor-glow[data-active='true'] {
+.cursor-glow[data-active="true"] {
   opacity: 0.85;
 }
 

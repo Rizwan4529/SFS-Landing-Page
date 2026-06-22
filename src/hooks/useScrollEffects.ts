@@ -21,9 +21,17 @@ export function useScrollEffects() {
       const vh = window.innerHeight
 
       const header = document.getElementById('sfs-header')
+      const chrome = document.getElementById('site-chrome')
       const ld = document.getElementById('logo-dark')
       const ll = document.getElementById('logo-light')
       const solid = y > 60
+
+      if (chrome) {
+        document.documentElement.style.setProperty(
+          '--site-chrome-height',
+          `${chrome.getBoundingClientRect().height}px`,
+        )
+      }
 
       if (header) {
         header.style.background = solid ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0)'

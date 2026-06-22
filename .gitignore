@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment secrets (commit .env.example only)
 .env
 .env.local
 .env.development
@@ -34,3 +35,10 @@ dist-ssr
 .env.test.local.backup.3
 .env.test.local.backup.4
 .env.test.local.backup.5
+
+# Large video assets — add locally; do not commit
+public/assets/*.mp4
+public/assets/*.webm
+public/assets/*.mov
+public/assets/*.avi
+public/assets/*.mkv
