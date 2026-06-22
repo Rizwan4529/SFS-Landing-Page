@@ -104,7 +104,7 @@ export function ExplainerVideo() {
       id={EXPLAINER_VIDEO_ID}
       ref={sectionRef}
       aria-labelledby="explainer-video-heading"
-      className="section-anchor bg-bg px-gutter py-section"
+      className="section-anchor bg-bg px-gutter pb-section"
     >
       <div className="mx-auto max-w-[920px]">
         <div className="mb-10 text-center">
