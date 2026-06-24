@@ -59,6 +59,15 @@ export function WaitlistForm() {
       return;
     }
 
+    if (!ENDPOINT?.trim()) {
+      setErr(
+        import.meta.env.PROD
+          ? "Waitlist is temporarily unavailable. Please try again later."
+          : "VITE_WAITLIST_ENDPOINT is missing in .env — add your Apps Script URL and restart npm run dev.",
+      );
+      return;
+    }
+
     setErr("");
     setStatus("submitting");
 
@@ -79,15 +88,8 @@ export function WaitlistForm() {
     };
 
     try {
-      if (ENDPOINT) {
-        await submitWaitlist(ENDPOINT, payload);
-      } else {
-        console.warn(
-          "VITE_WAITLIST_ENDPOINT is not set. Submission was not sent anywhere.",
-        );
-        await new Promise((r) => setTimeout(r, 600));
-      }
-      trackWaitlistSignup(selectedCampaign.label);
+      await submitWaitlist(ENDPOINT, payload)
+      trackWaitlistSignup(selectedCampaign.label)
       setFirstName(trimmedName.split(" ")[0] || "there");
       setStatus("success");
       requestAnimationFrame(() => successRef.current?.focus());
