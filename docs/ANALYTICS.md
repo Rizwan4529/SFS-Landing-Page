@@ -44,12 +44,12 @@ Rebuild and deploy the site. Analytics only loads when this variable is set.
 
 ### Custom events tracked
 
-| Event | Description |
-|-------|-------------|
-| `page_view` | Each page load |
-| `waitlist_signup` | Successful waitlist form submission |
-| `cta_click` | Waitlist button clicks (`hero`, `sticky`, `header`, `closing`) |
-| `video_click` | Videos card click when `VITE_INTRO_VIDEO_URL` is set |
+| Event             | Description                                                    |
+| ----------------- | -------------------------------------------------------------- |
+| `page_view`       | Each page load                                                 |
+| `waitlist_signup` | Successful waitlist form submission                            |
+| `cta_click`       | Waitlist button clicks (`hero`, `sticky`, `header`, `closing`) |
+| `video_click`     | Videos card click when `VITE_INTRO_VIDEO_URL` is set           |
 
 ### Conversion rate
 
@@ -88,14 +88,18 @@ UTM parameters are also saved with each waitlist signup in the Google Sheet.
 
 3. **Extensions** → **Apps Script**
 4. Paste the code from [`scripts/waitlist-apps-script.gs`](../scripts/waitlist-apps-script.gs)
-5. **Deploy** → **New deployment** → **Web app**
+5. Set **`SPREADSHEET_ID`** at the top of the script (from your sheet URL: `.../d/THIS_ID/edit`)
+6. **Deploy** → **New deployment** → **Web app** (or **Manage deployments** → **Edit** → **New version** after changes)
    - Execute as: **Me**
    - Who has access: **Anyone**
-6. Copy the deployment URL into `.env`:
+7. Open the deployment URL in your browser — you should see JSON with your spreadsheet name and `rowCount`
+8. Copy the deployment URL into `.env` and **Vercel Environment Variables**:
 
    ```
    VITE_WAITLIST_ENDPOINT=https://script.google.com/macros/s/YOUR_ID/exec
    ```
+
+9. **Redeploy** the Vercel site after adding the variable
 
 ### What gets logged per signup
 
@@ -106,6 +110,15 @@ UTM parameters are also saved with each waitlist signup in the Google Sheet.
 - UTM source, medium, campaign, content (from URL or empty)
 - HTTP referrer (e.g. facebook.com, direct)
 - Full landing page URL
+
+### Troubleshooting (no rows appearing)
+
+1. **Set `SPREADSHEET_ID`** in Apps Script — without it, rows may go to the wrong file
+2. **Redeploy** Apps Script after every code change (Manage deployments → Edit → New version)
+3. **Vercel** must have `VITE_WAITLIST_ENDPOINT` set, then redeploy the site
+4. Visit your Apps Script URL in the browser — confirm `spreadsheetName` matches **SFS Waitlist**
+5. Tab must be named exactly **`Waitlist`** (case-sensitive)
+6. In Apps Script → **Executions**, check for errors after a test signup
 
 ### Owner access
 
@@ -127,14 +140,14 @@ The Education **Videos** card becomes a clickable link and fires `video_click` i
 
 ## 4. Metrics checklist (client requirements)
 
-| Requirement | Solution |
-|-------------|----------|
-| Total visitors | GA4 → Users / Active users |
-| Page views | GA4 → Views |
-| Video views/clicks | GA4 → `video_click` events |
-| Waitlist signups | GA4 `waitlist_signup` + Google Sheet rows |
-| Date/time of signups | Sheet `Timestamp` column |
-| Traffic source | GA4 acquisition reports + Sheet UTM columns |
-| Conversion rates | GA4 conversions / sessions |
-| Google Analytics integration | `VITE_GA_MEASUREMENT_ID` |
-| Owner/admin access | GA4 admin + Sheet owner |
+| Requirement                  | Solution                                    |
+| ---------------------------- | ------------------------------------------- |
+| Total visitors               | GA4 → Users / Active users                  |
+| Page views                   | GA4 → Views                                 |
+| Video views/clicks           | GA4 → `video_click` events                  |
+| Waitlist signups             | GA4 `waitlist_signup` + Google Sheet rows   |
+| Date/time of signups         | Sheet `Timestamp` column                    |
+| Traffic source               | GA4 acquisition reports + Sheet UTM columns |
+| Conversion rates             | GA4 conversions / sessions                  |
+| Google Analytics integration | `VITE_GA_MEASUREMENT_ID`                    |
+| Owner/admin access           | GA4 admin + Sheet owner                     |
