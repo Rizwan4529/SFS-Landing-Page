@@ -84,7 +84,7 @@ UTM parameters are also saved with each waitlist signup in the Google Sheet.
 1. Create a Google Sheet named **SFS Waitlist**
 2. Add a tab named `Waitlist` with headers in row 1:
 
-   `Timestamp | Name | Email | UTM Source | UTM Medium | UTM Campaign | UTM Content | Referrer | Landing Page`
+   `Timestamp | Name | Email | Campaign | Message | UTM Source | UTM Medium | UTM Campaign | UTM Content | Referrer | Landing Page`
 
 3. **Extensions** → **Apps Script**
 4. Paste the code from [`scripts/waitlist-apps-script.gs`](../scripts/waitlist-apps-script.gs)
@@ -101,6 +101,8 @@ UTM parameters are also saved with each waitlist signup in the Google Sheet.
 
 - ISO timestamp (`signedUpAt`)
 - Name and email
+- Campaign category (dropdown selection)
+- Optional message from the visitor
 - UTM source, medium, campaign, content (from URL or empty)
 - HTTP referrer (e.g. facebook.com, direct)
 - Full landing page URL

@@ -3,15 +3,22 @@ import { Loader2 } from 'lucide-react'
 import { cn } from '../lib/cn'
 import { getAttribution } from '../lib/attribution'
 import { trackWaitlistSignup } from '../lib/analytics'
+import { CAMPAIGN_CATEGORIES, CAMPAIGN_TOOLTIP } from '../lib/campaignCategories'
+import { FieldTooltip } from './FieldTooltip'
 
 type Status = 'idle' | 'submitting' | 'success' | 'error'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const MESSAGE_MAX = 500
 const ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT as string | undefined
+
+const labelClass = 'mb-[7px] flex items-center text-[13px] font-semibold tracking-wide text-muted-light'
 
 export function WaitlistForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [campaign, setCampaign] = useState('')
+  const [message, setMessage] = useState('')
   const [err, setErr] = useState('')
   const [firstName, setFirstName] = useState('there')
   const [status, setStatus] = useState<Status>('idle')
@@ -29,12 +36,19 @@ export function WaitlistForm() {
 
     const trimmedName = name.trim()
     const trimmedEmail = email.trim()
+    const trimmedMessage = message.trim()
+    const selectedCampaign = CAMPAIGN_CATEGORIES.find((c) => c.value === campaign)
+
     if (!trimmedName) {
       setErr('Please enter your name.')
       return
     }
     if (!EMAIL_RE.test(trimmedEmail)) {
       setErr('Please enter a valid email address.')
+      return
+    }
+    if (!selectedCampaign) {
+      setErr('Please select a campaign category.')
       return
     }
 
@@ -45,6 +59,9 @@ export function WaitlistForm() {
     const payload = {
       name: trimmedName,
       email: trimmedEmail,
+      campaign: selectedCampaign.label,
+      campaignValue: selectedCampaign.value,
+      message: trimmedMessage,
       signedUpAt: new Date().toISOString(),
       utmSource: attribution.utmSource,
       utmMedium: attribution.utmMedium,
@@ -66,7 +83,7 @@ export function WaitlistForm() {
         console.warn('VITE_WAITLIST_ENDPOINT is not set. Submission was not sent anywhere.')
         await new Promise((r) => setTimeout(r, 600))
       }
-      trackWaitlistSignup()
+      trackWaitlistSignup(selectedCampaign.label)
       setFirstName(trimmedName.split(' ')[0] || 'there')
       setStatus('success')
       requestAnimationFrame(() => successRef.current?.focus())
@@ -110,7 +127,7 @@ export function WaitlistForm() {
     )
   }
 
-  const inputClass = cn(
+  const fieldClass = cn(
     'w-full rounded-brand border border-white/16 bg-white/6 px-4 py-[15px] text-base text-white outline-none transition-[border-color,background-color] duration-[400ms] ease-[cubic-bezier(0.16,0.84,0.34,1)]',
     'placeholder:text-white/40 focus:border-gold focus:bg-white/10',
   )
@@ -123,7 +140,7 @@ export function WaitlistForm() {
       </div>
 
       <div>
-        <label htmlFor="wl-name" className="mb-[7px] block text-[13px] font-semibold tracking-wide text-muted-light">
+        <label htmlFor="wl-name" className={labelClass}>
           Name
         </label>
         <input
@@ -133,12 +150,12 @@ export function WaitlistForm() {
           autoComplete="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className={inputClass}
+          className={fieldClass}
         />
       </div>
 
       <div>
-        <label htmlFor="wl-email" className="mb-[7px] block text-[13px] font-semibold tracking-wide text-muted-light">
+        <label htmlFor="wl-email" className={labelClass}>
           Email
         </label>
         <input
@@ -148,8 +165,51 @@ export function WaitlistForm() {
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={inputClass}
+          className={fieldClass}
         />
+      </div>
+
+      <div>
+        <label htmlFor="wl-campaign" className={labelClass}>
+          Campaign
+          <FieldTooltip id="wl-campaign-tooltip" text={CAMPAIGN_TOOLTIP} />
+        </label>
+        <select
+          id="wl-campaign"
+          value={campaign}
+          onChange={(e) => setCampaign(e.target.value)}
+          className={cn(fieldClass, 'cursor-pointer appearance-none bg-[length:16px] bg-position-[right_14px_center] bg-no-repeat pr-10')}
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.55)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+          }}
+        >
+          <option value="" disabled className="bg-[#0f2448] text-white">
+            Select a campaign category
+          </option>
+          {CAMPAIGN_CATEGORIES.map((cat) => (
+            <option key={cat.value} value={cat.value} className="bg-[#0f2448] text-white">
+              {cat.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="wl-message" className={labelClass}>
+          Message <span className="ml-1 font-normal text-white/45">(optional)</span>
+        </label>
+        <textarea
+          id="wl-message"
+          placeholder="Tell us about your goal or what you hope to fund..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          maxLength={MESSAGE_MAX}
+          rows={4}
+          className={cn(fieldClass, 'resize-y min-h-[108px]')}
+        />
+        <p className="mt-1.5 text-right text-[12px] text-white/40">
+          {message.length}/{MESSAGE_MAX}
+        </p>
       </div>
 
       <p className="m-0 min-h-[18px] text-[13.5px] text-[#f0a48a]">{err}</p>

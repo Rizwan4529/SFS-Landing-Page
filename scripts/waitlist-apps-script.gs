@@ -3,13 +3,13 @@
  *
  * Setup:
  * 1. Create a Google Sheet with headers in row 1:
- *    Timestamp | Name | Email | UTM Source | UTM Medium | UTM Campaign | UTM Content | Referrer | Landing Page
+ *    Timestamp | Name | Email | Campaign | Message | UTM Source | UTM Medium | UTM Campaign | UTM Content | Referrer | Landing Page
  * 2. Extensions → Apps Script → paste this file
  * 3. Set SHEET_NAME below if your tab is not "Waitlist"
  * 4. Deploy → New deployment → Web app
  *    - Execute as: Me
  *    - Who has access: Anyone
- * 5. Copy the web app URL into VITE_WAITLIST_ENDPOINT
+ * 5. Copy the web app URL into VITE_WAITLIST_ENDPOINT in .env
  */
 
 const SHEET_NAME = 'Waitlist'
@@ -27,6 +27,8 @@ function doPost(e) {
       data.signedUpAt || new Date().toISOString(),
       data.name || '',
       data.email || '',
+      data.campaign || '',
+      data.message || '',
       data.utmSource || '',
       data.utmMedium || '',
       data.utmCampaign || '',

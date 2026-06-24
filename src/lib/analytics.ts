@@ -57,8 +57,11 @@ export function trackCtaClick(location: CtaLocation): void {
   trackEvent('cta_click', { location })
 }
 
-export function trackWaitlistSignup(): void {
-  trackEvent('waitlist_signup', { method: 'form' })
+export function trackWaitlistSignup(campaign?: string): void {
+  trackEvent('waitlist_signup', {
+    method: 'form',
+    ...(campaign ? { campaign_category: campaign } : {}),
+  })
 }
 
 export function trackVideoClick(videoTitle: string, videoUrl: string): void {
