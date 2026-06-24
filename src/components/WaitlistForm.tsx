@@ -32,11 +32,13 @@ export function WaitlistForm() {
   const successRef = useRef<HTMLDivElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
+    // console.log("handleSubmit");
     e.preventDefault();
 
     if (honeypotRef.current?.value) {
+      // console.log("honeypotRef.current?.value", honeypotRef.current?.value);
       setStatus("success");
-      return;
+      // return;
     }
 
     const trimmedName = name.trim();
@@ -45,7 +47,7 @@ export function WaitlistForm() {
     const selectedCampaign = CAMPAIGN_CATEGORIES.find(
       (c) => c.value === campaign,
     );
-
+    // console.log("selectedCampaign", selectedCampaign);
     if (!trimmedName) {
       setErr("Please enter your name.");
       return;
@@ -68,6 +70,7 @@ export function WaitlistForm() {
       return;
     }
 
+    // console.log("ENDPOINT", ENDPOINT);
     setErr("");
     setStatus("submitting");
 
@@ -88,8 +91,9 @@ export function WaitlistForm() {
     };
 
     try {
-      await submitWaitlist(ENDPOINT, payload)
-      trackWaitlistSignup(selectedCampaign.label)
+      // console.log("submitting waitlist", payload);
+      await submitWaitlist(ENDPOINT, payload);
+      trackWaitlistSignup(selectedCampaign.label);
       setFirstName(trimmedName.split(" ")[0] || "there");
       setStatus("success");
       requestAnimationFrame(() => successRef.current?.focus());
