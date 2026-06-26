@@ -7,6 +7,8 @@
  *    - Who has access: Anyone
  * 2. Copy the URL ending in /exec (NOT /library/...)
  * 3. Paste into VITE_WAITLIST_ENDPOINT (.env + Vercel) then redeploy site
+ *
+ * Sheet columns (row 1): Timestamp | Name | Email | Campaign | Message | Landing Page
  */
 
 const SPREADSHEET_ID = "1gEiAnDffjCIgJ3VuUo_277S2hKRzjBvpWAsCIR6bxA8";
@@ -55,11 +57,6 @@ function appendSignup(data) {
     data.email || "",
     data.campaign || "",
     data.message || "",
-    data.utmSource || "",
-    data.utmMedium || "",
-    data.utmCampaign || "",
-    data.utmContent || "",
-    data.referrer || "",
     data.landingPage || "",
   ]);
 }
