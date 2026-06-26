@@ -14,6 +14,11 @@ let initialized = false
 function loadGtag(): void {
   if (initialized || !GA_ID || typeof window === 'undefined') return
 
+  if (window.gtag) {
+    initialized = true
+    return
+  }
+
   window.dataLayer = window.dataLayer ?? []
   window.gtag = function gtag(...args: unknown[]) {
     window.dataLayer!.push(args)
