@@ -85,15 +85,13 @@ export function WaitlistForm() {
       utmSource: attribution.utmSource,
       utmMedium: attribution.utmMedium,
       utmCampaign: attribution.utmCampaign,
-      utmContent: attribution.utmContent,
-      referrer: attribution.referrer,
       landingPage: attribution.landingPage,
     };
 
     try {
       // console.log("submitting waitlist", payload);
       await submitWaitlist(ENDPOINT, payload);
-      trackWaitlistSignup(selectedCampaign.label);
+      trackWaitlistSignup(selectedCampaign.label, attribution);
       setFirstName(trimmedName.split(" ")[0] || "there");
       setStatus("success");
       requestAnimationFrame(() => successRef.current?.focus());

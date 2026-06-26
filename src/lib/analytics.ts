@@ -1,3 +1,5 @@
+import type { Attribution } from './attribution'
+
 type GtagFn = (...args: unknown[]) => void
 
 declare global {
@@ -62,10 +64,20 @@ export function trackCtaClick(location: CtaLocation): void {
   trackEvent('cta_click', { location })
 }
 
-export function trackWaitlistSignup(campaign?: string): void {
+export function trackWaitlistSignup(
+  campaign?: string,
+  attribution?: Pick<
+    Attribution,
+    'utmSource' | 'utmMedium' | 'utmCampaign' | 'utmContent'
+  >,
+): void {
   trackEvent('waitlist_signup', {
     method: 'form',
     ...(campaign ? { campaign_category: campaign } : {}),
+    ...(attribution?.utmSource ? { source: attribution.utmSource } : {}),
+    ...(attribution?.utmMedium ? { medium: attribution.utmMedium } : {}),
+    ...(attribution?.utmCampaign ? { campaign: attribution.utmCampaign } : {}),
+    ...(attribution?.utmContent ? { content: attribution.utmContent } : {}),
   })
 }
 

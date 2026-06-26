@@ -8,8 +8,6 @@ export type WaitlistPayload = {
   utmSource: string;
   utmMedium: string;
   utmCampaign: string;
-  utmContent: string;
-  referrer: string;
   landingPage: string;
 };
 
@@ -26,8 +24,6 @@ const FORM_FIELDS: (keyof WaitlistPayload)[] = [
   "utmSource",
   "utmMedium",
   "utmCampaign",
-  "utmContent",
-  "referrer",
   "landingPage",
 ];
 
