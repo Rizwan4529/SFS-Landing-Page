@@ -18,7 +18,7 @@ function injectGoogleAnalytics(gaId: string | undefined) {
   return {
     name: "inject-google-analytics",
     transformIndexHtml(html: string) {
-      return html.replace("</head>", `${snippet}\n  </head>`);
+      return html.replace("<head>", `<head>\n    ${snippet}`);
     },
   };
 }
