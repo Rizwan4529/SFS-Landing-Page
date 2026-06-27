@@ -14,6 +14,7 @@ import { HowItWorks } from './sections/HowItWorks'
 import { Rewards } from './sections/Rewards'
 import { Marketing } from './sections/Marketing'
 import { Education } from './sections/Education'
+import { Faq } from './sections/Faq'
 import { Closing } from './sections/Closing'
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
         <Rewards />
         <Marketing />
         <Education />
+        <Faq />
         <Closing />
       </main>
     </>

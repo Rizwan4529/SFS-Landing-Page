@@ -242,6 +242,32 @@
   transform: none;
 }
 
+.explainer-video-shell {
+  /* Native controls need room on touch devices — avoid clipping the bar */
+}
+
+.explainer-video-player {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(75vh, 640px);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 768px) {
+  .explainer-video-shell {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .explainer-video-player {
+    height: 100%;
+    max-height: none;
+    object-fit: contain;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

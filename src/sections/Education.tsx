@@ -34,7 +34,7 @@ const ITEMS = [
     title: 'FAQs',
     desc: 'Clear answers to common questions.',
     delay: 0.1,
-    href: undefined,
+    href: '#faqs',
     icon: (
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#cf9f34" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="9" />
@@ -88,6 +88,24 @@ function EducationCard({
             e.preventDefault()
             trackVideoClick(EXPLAINER_VIDEO_TITLE, EXPLAINER_VIDEO_SRC)
             scrollToId(EXPLAINER_VIDEO_ID)
+          }}
+        >
+          {content}
+        </a>
+      </CategoryCard>
+    )
+  }
+
+  if (item.href?.startsWith('#')) {
+    const sectionId = item.href.slice(1)
+    return (
+      <CategoryCard delay={item.delay} className={cardClass}>
+        <a
+          href={item.href}
+          className="block no-underline text-inherit"
+          onClick={(e) => {
+            e.preventDefault()
+            scrollToId(sectionId)
           }}
         >
           {content}

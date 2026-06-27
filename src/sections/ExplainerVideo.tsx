@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Play } from "lucide-react";
 import { Reveal } from "../components/Reveal";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import {
   EXPLAINER_VIDEO_DRIVE_VIEW_URL,
   EXPLAINER_VIDEO_ID,
@@ -8,9 +10,36 @@ import {
   isDriveVideoEmbed,
 } from "../lib/video";
 import { trackEvent } from "../lib/analytics";
+import { cn } from "../lib/cn";
 
 const AUTOPLAY_VISIBLE_RATIO = 0.5;
 const PAUSE_VISIBLE_RATIO = 0.15;
+const MOBILE_VIDEO_QUERY = "(max-width: 767px)";
+
+function DriveMobileVideoPrompt({ onOpen }: { onOpen: () => void }) {
+  return (
+    <div className="flex min-h-[220px] flex-col items-center justify-center gap-4 bg-gradient-to-br from-navy-darkest to-navy-card px-6 py-10 text-center sm:min-h-[260px]">
+      <span className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-gradient-gold shadow-[0_0_28px_rgba(207,159,52,0.45)]">
+        <Play size={28} fill="#0b1f44" stroke="#0b1f44" aria-hidden="true" />
+      </span>
+      <div>
+        <p className="m-0 font-display text-lg font-bold text-white">
+          SFS platform explainer
+        </p>
+        <p className="mx-auto mt-2 max-w-[280px] text-sm leading-relaxed text-[rgba(206,218,242,0.75)]">
+          Tap below for the full-screen mobile player with responsive controls.
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="interactive-btn rounded-brand bg-gradient-gold px-6 py-3.5 font-display text-[15px] font-bold tracking-wide text-[#0b1f44] shadow-[0_12px_34px_rgba(207,159,52,0.4)]"
+      >
+        Watch explainer video
+      </button>
+    </div>
+  );
+}
 
 export function ExplainerVideo() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -19,7 +48,10 @@ export function ExplainerVideo() {
   const userPausedRef = useRef(false);
   const programmaticPauseRef = useRef(false);
   const [loadError, setLoadError] = useState(false);
+  const isMobile = useMediaQuery(MOBILE_VIDEO_QUERY);
   const useDriveEmbed = isDriveVideoEmbed(EXPLAINER_VIDEO_SRC);
+  const useDriveIframe = useDriveEmbed && !isMobile;
+  const useNativeVideo = !useDriveIframe;
 
   const trackEngagement = useCallback(() => {
     if (!hasTrackedPlayRef.current) {
@@ -39,7 +71,7 @@ export function ExplainerVideo() {
   }, []);
 
   const tryAutoplay = useCallback(() => {
-    if (userPausedRef.current || useDriveEmbed) return;
+    if (userPausedRef.current || !useNativeVideo) return;
 
     const video = videoRef.current;
     if (!video || (!video.paused && !video.ended)) return;
@@ -54,10 +86,10 @@ export function ExplainerVideo() {
           .then(() => trackEngagement())
           .catch(() => {});
       });
-  }, [trackEngagement, useDriveEmbed]);
+  }, [trackEngagement, useNativeVideo]);
 
   useEffect(() => {
-    if (useDriveEmbed) return;
+    if (!useNativeVideo) return;
 
     const section = sectionRef.current;
     if (!section) return;
@@ -81,7 +113,7 @@ export function ExplainerVideo() {
 
     observer.observe(section);
     return () => observer.disconnect();
-  }, [pauseVideo, tryAutoplay, useDriveEmbed]);
+  }, [pauseVideo, tryAutoplay, useNativeVideo]);
 
   function handlePlay() {
     userPausedRef.current = false;
@@ -97,6 +129,11 @@ export function ExplainerVideo() {
     if (video && !video.ended) {
       userPausedRef.current = true;
     }
+  }
+
+  function handleOpenDriveMobile() {
+    trackEngagement();
+    window.open(EXPLAINER_VIDEO_DRIVE_VIEW_URL, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -129,9 +166,16 @@ export function ExplainerVideo() {
           </Reveal>
         </div>
 
-        <div className="relative overflow-hidden rounded-panel border border-navy-border-alt bg-gradient-to-br from-navy to-navy-card p-3 shadow-[0_40px_80px_-40px_rgba(12,31,68,0.55)] sm:p-2">
-          <div className="relative aspect-video overflow-hidden rounded-brand bg-black">
-            {useDriveEmbed ? (
+        <div className="relative overflow-hidden rounded-panel border border-navy-border-alt bg-gradient-to-br from-navy to-navy-card p-2.5 shadow-[0_40px_80px_-40px_rgba(12,31,68,0.55)] sm:p-3">
+          <div
+            className={cn(
+              "explainer-video-shell relative rounded-brand bg-black",
+              useNativeVideo
+                ? "overflow-visible"
+                : "aspect-video overflow-hidden",
+            )}
+          >
+            {useDriveIframe ? (
               <iframe
                 src={EXPLAINER_VIDEO_SRC}
                 className="absolute inset-0 h-full w-full border-0"
@@ -140,14 +184,16 @@ export function ExplainerVideo() {
                 title="SFS platform explainer video"
                 onLoad={trackEngagement}
               />
+            ) : useDriveEmbed && isMobile ? (
+              <DriveMobileVideoPrompt onOpen={handleOpenDriveMobile} />
             ) : (
               <video
                 ref={videoRef}
-                className="absolute inset-0 h-full w-full bg-black object-contain"
+                className="explainer-video-player block w-full bg-black"
                 src={EXPLAINER_VIDEO_SRC}
                 controls
                 playsInline
-                preload="auto"
+                preload="metadata"
                 controlsList="nodownload"
                 aria-label="SFS platform explainer video"
                 onPlay={handlePlay}
@@ -155,11 +201,13 @@ export function ExplainerVideo() {
                 onError={() => setLoadError(true)}
               />
             )}
-            {loadError && (
+            {loadError && useNativeVideo && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/80 p-6 text-center">
                 <p className="m-0 text-sm text-white/90">
-                  The video could not be loaded. Please hard-refresh the page
-                  (Ctrl+Shift+R) and try again.
+                  The video could not be loaded. Place{" "}
+                  <code className="text-gold-light">SFS-explainer.mp4</code> in{" "}
+                  <code className="text-gold-light">public/assets/</code>, or open
+                  it on Google Drive.
                 </p>
                 <a
                   href={EXPLAINER_VIDEO_DRIVE_VIEW_URL}

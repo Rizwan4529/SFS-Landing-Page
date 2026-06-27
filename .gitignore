@@ -36,7 +36,8 @@ dist-ssr
 .env.test.local.backup.4
 .env.test.local.backup.5
 
-# Large video assets — add locally; do not commit
+# Large video assets — add locally; do not commit (copy to public/assets/ before build)
+public/assets/SFS-explainer.mp4
 public/assets/*.mp4
 public/assets/*.webm
 public/assets/*.mov
