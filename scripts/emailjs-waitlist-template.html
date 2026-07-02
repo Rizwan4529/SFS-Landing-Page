@@ -1,0 +1,38 @@
+<!--
+  EmailJS template reference for SFS waitlist notifications.
+  Paste the SUBJECT and BODY sections into your EmailJS template editor.
+
+  Template settings in EmailJS:
+  - To Email:    {{to_email}}
+  - From Name:   Share Fund System
+  - Reply To:    {{reply_to}}
+  - Subject:     {{subject_line}}
+  - Content:     HTML (enable HTML mode)
+-->
+
+<!-- SUBJECT (EmailJS "Subject" field) -->
+{{subject_line}}
+
+<!-- BODY (EmailJS "Content" field — switch to HTML / code view) -->
+{{{email_html}}}
+
+<!--
+  Optional plain-text fallback (add a second template or use if your plan supports multipart):
+  {{message_plain}}
+
+  Required template variables (auto-filled by the site):
+  - to_email
+  - reply_to
+  - subject_line
+  - email_html
+  - message_plain
+  - signup_name
+  - signup_email
+  - signup_campaign
+  - signup_message
+  - signup_date
+  - signup_utm_source
+  - signup_utm_medium
+  - signup_utm_campaign
+  - signup_landing_page
+-->

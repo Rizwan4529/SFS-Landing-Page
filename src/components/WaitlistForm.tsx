@@ -7,6 +7,7 @@ import {
   CAMPAIGN_CATEGORIES,
   CAMPAIGN_TOOLTIP,
 } from "../lib/campaignCategories";
+import { sendWaitlistNotification } from "../lib/sendWaitlistNotification";
 import { submitWaitlist } from "../lib/submitWaitlist";
 import { FieldTooltip } from "./FieldTooltip";
 
@@ -91,6 +92,9 @@ export function WaitlistForm() {
     try {
       // console.log("submitting waitlist", payload);
       await submitWaitlist(ENDPOINT, payload);
+      void sendWaitlistNotification(payload).catch((notifyError) => {
+        console.warn("Waitlist notification email failed:", notifyError);
+      });
       trackWaitlistSignup(selectedCampaign.label, attribution);
       setFirstName(trimmedName.split(" ")[0] || "there");
       setStatus("success");
