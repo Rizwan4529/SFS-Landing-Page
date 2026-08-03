@@ -19,7 +19,7 @@ const ITEMS = [
   },
   {
     title: 'Videos',
-    desc: 'Watch the SFS explainer and learn at your own pace.',
+    desc: 'SFS intro and Success Centers explainers.',
     delay: 0.05,
     href: `#${EXPLAINER_VIDEO_ID}`,
     isExplainer: true,

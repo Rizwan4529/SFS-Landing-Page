@@ -6,6 +6,7 @@ import { VideoFab } from './components/VideoFab'
 import { Hero } from './sections/Hero'
 import { Problem } from './sections/Problem'
 import { ExplainerVideo } from './sections/ExplainerVideo'
+import { SuccessCentersVideo } from './sections/SuccessCentersVideo'
 import { Introducing } from './sections/Introducing'
 import { TrustPreLaunch } from './sections/TrustPreLaunch'
 import { WaitlistSection } from './sections/Waitlist'
@@ -33,6 +34,7 @@ function App() {
         <Hero />
         <Problem />
         <ExplainerVideo />
+        <SuccessCentersVideo />
         <Introducing />
         <TrustPreLaunch />
         <WaitlistSection />
