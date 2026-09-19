@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "../lib/cn";
 import { getAttribution } from "../lib/attribution";
@@ -6,8 +6,14 @@ import { trackWaitlistSignup } from "../lib/analytics";
 import {
   CAMPAIGN_CATEGORIES,
   CAMPAIGN_TOOLTIP,
+  type CampaignCategory,
 } from "../lib/campaignCategories";
-import { sendWaitlistNotification } from "../lib/sendWaitlistNotification";
+// Email notifications are handled by the backend — keep EmailJS ready but disabled.
+// import { sendWaitlistNotification } from "../lib/sendWaitlistNotification";
+import {
+  fetchWaitlistCampaignCategories,
+  submitWaitlistToApi,
+} from "../lib/waitlistApi";
 import { submitWaitlist } from "../lib/submitWaitlist";
 import { FieldTooltip } from "./FieldTooltip";
 
@@ -15,7 +21,9 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MESSAGE_MAX = 500;
-const ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT as string | undefined;
+const SHEET_ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT as
+  | string
+  | undefined;
 
 const labelClass =
   "mb-[7px] flex items-center text-[13px] font-semibold tracking-wide text-muted-light";
@@ -28,27 +36,51 @@ export function WaitlistForm() {
   const [err, setErr] = useState("");
   const [firstName, setFirstName] = useState("there");
   const [status, setStatus] = useState<Status>("idle");
+  const [categories, setCategories] =
+    useState<CampaignCategory[]>(CAMPAIGN_CATEGORIES);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const honeypotRef = useRef<HTMLInputElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCategories() {
+      try {
+        const remote = await fetchWaitlistCampaignCategories();
+        if (!cancelled && remote.length > 0) {
+          setCategories(remote);
+        }
+      } catch (error) {
+        console.warn(
+          "[SFS] Failed to load campaign categories from API — using fallback list.",
+          error,
+        );
+      } finally {
+        if (!cancelled) setCategoriesLoading(false);
+      }
+    }
+
+    void loadCategories();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
-    // console.log("handleSubmit");
     e.preventDefault();
 
     if (honeypotRef.current?.value) {
-      // console.log("honeypotRef.current?.value", honeypotRef.current?.value);
       setStatus("success");
-      // return;
+      return;
     }
 
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
     const trimmedMessage = message.trim();
-    const selectedCampaign = CAMPAIGN_CATEGORIES.find(
-      (c) => c.value === campaign,
-    );
-    // console.log("selectedCampaign", selectedCampaign);
+    const selectedCampaign = categories.find((c) => c.value === campaign);
+
     if (!trimmedName) {
       setErr("Please enter your name.");
       return;
@@ -62,21 +94,11 @@ export function WaitlistForm() {
       return;
     }
 
-    if (!ENDPOINT?.trim()) {
-      setErr(
-        import.meta.env.PROD
-          ? "Waitlist is temporarily unavailable. Please try again later."
-          : "VITE_WAITLIST_ENDPOINT is missing in .env — add your Apps Script URL and restart npm run dev.",
-      );
-      return;
-    }
-
-    // console.log("ENDPOINT", ENDPOINT);
     setErr("");
     setStatus("submitting");
 
     const attribution = getAttribution();
-    const payload = {
+    const sheetPayload = {
       name: trimmedName,
       email: trimmedEmail,
       campaign: selectedCampaign.label,
@@ -89,12 +111,38 @@ export function WaitlistForm() {
       landingPage: attribution.landingPage,
     };
 
+    const apiPayload = {
+      name: trimmedName,
+      email: trimmedEmail,
+      campaignCategory: selectedCampaign.value,
+      message: trimmedMessage,
+    };
+
     try {
-      // console.log("submitting waitlist", payload);
-      await submitWaitlist(ENDPOINT, payload);
-      void sendWaitlistNotification(payload).catch((notifyError) => {
-        console.warn("Waitlist notification email failed:", notifyError);
-      });
+      // Primary: backend waitlist API
+      await submitWaitlistToApi(apiPayload);
+
+      // Also log to Google Sheet (existing Apps Script flow)
+      if (SHEET_ENDPOINT?.trim()) {
+        try {
+          await submitWaitlist(SHEET_ENDPOINT, sheetPayload);
+        } catch (sheetError) {
+          console.warn(
+            "[SFS] Google Sheet waitlist log failed (API signup succeeded):",
+            sheetError,
+          );
+        }
+      } else if (import.meta.env.DEV) {
+        console.warn(
+          "[SFS] VITE_WAITLIST_ENDPOINT is missing — skipping Google Sheet log.",
+        );
+      }
+
+      // Email notifications are handled by the backend.
+      // void sendWaitlistNotification(sheetPayload).catch((notifyError) => {
+      //   console.warn("Waitlist notification email failed:", notifyError);
+      // });
+
       trackWaitlistSignup(selectedCampaign.label, attribution);
       setFirstName(trimmedName.split(" ")[0] || "there");
       setStatus("success");
@@ -204,18 +252,22 @@ export function WaitlistForm() {
           id="wl-campaign"
           value={campaign}
           onChange={(e) => setCampaign(e.target.value)}
+          disabled={categoriesLoading}
           className={cn(
             fieldClass,
             "cursor-pointer appearance-none bg-[length:16px] bg-position-[right_14px_center] bg-no-repeat pr-10",
+            categoriesLoading && "cursor-wait opacity-70",
           )}
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.55)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
           }}
         >
           <option value="" disabled className="bg-[#0f2448] text-white">
-            Select a campaign category
+            {categoriesLoading
+              ? "Loading categories..."
+              : "Select a campaign category"}
           </option>
-          {CAMPAIGN_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <option
               key={cat.value}
               value={cat.value}
@@ -250,7 +302,7 @@ export function WaitlistForm() {
 
       <button
         type="submit"
-        disabled={status === "submitting"}
+        disabled={status === "submitting" || categoriesLoading}
         className="interactive-btn mt-1 w-full cursor-pointer rounded-brand border-none bg-gradient-gold py-[17px] font-display text-[16.5px] font-bold tracking-wide text-[#0b1f44] shadow-[0_12px_30px_rgba(207,159,52,0.4)] hover:shadow-[0_16px_40px_rgba(207,159,52,0.55)] disabled:pointer-events-none disabled:opacity-70"
       >
         {status === "submitting" ? (
