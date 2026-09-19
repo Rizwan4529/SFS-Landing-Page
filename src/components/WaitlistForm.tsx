@@ -71,8 +71,9 @@ export function WaitlistForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    // Honeypot: bots fill this. Do NOT treat autofill as success — just ignore bots quietly.
     if (honeypotRef.current?.value) {
-      setStatus("success");
+      console.warn("[SFS] Honeypot filled — ignoring submission.");
       return;
     }
 
@@ -120,7 +121,9 @@ export function WaitlistForm() {
 
     try {
       // Primary: backend waitlist API
+      console.log("[SFS] POST /waitlist", apiPayload);
       await submitWaitlistToApi(apiPayload);
+      console.log("[SFS] POST /waitlist succeeded");
 
       // Also log to Google Sheet (existing Apps Script flow)
       if (SHEET_ENDPOINT?.trim()) {
@@ -202,14 +205,15 @@ export function WaitlistForm() {
         aria-hidden="true"
         className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden"
       >
-        <label htmlFor="company">Company</label>
+        <label htmlFor="wl-fax">Fax</label>
         <input
           ref={honeypotRef}
-          id="company"
-          name="company"
+          id="wl-fax"
+          name="fax_number"
           type="text"
           tabIndex={-1}
           autoComplete="off"
+          defaultValue=""
         />
       </div>
 
@@ -252,11 +256,9 @@ export function WaitlistForm() {
           id="wl-campaign"
           value={campaign}
           onChange={(e) => setCampaign(e.target.value)}
-          disabled={categoriesLoading}
           className={cn(
             fieldClass,
             "cursor-pointer appearance-none bg-[length:16px] bg-position-[right_14px_center] bg-no-repeat pr-10",
-            categoriesLoading && "cursor-wait opacity-70",
           )}
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.55)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
@@ -302,7 +304,7 @@ export function WaitlistForm() {
 
       <button
         type="submit"
-        disabled={status === "submitting" || categoriesLoading}
+        disabled={status === "submitting"}
         className="interactive-btn mt-1 w-full cursor-pointer rounded-brand border-none bg-gradient-gold py-[17px] font-display text-[16.5px] font-bold tracking-wide text-[#0b1f44] shadow-[0_12px_30px_rgba(207,159,52,0.4)] hover:shadow-[0_16px_40px_rgba(207,159,52,0.55)] disabled:pointer-events-none disabled:opacity-70"
       >
         {status === "submitting" ? (

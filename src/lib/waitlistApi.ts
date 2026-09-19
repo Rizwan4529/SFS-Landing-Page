@@ -49,7 +49,9 @@ export async function fetchWaitlistCampaignCategories(): Promise<
 export async function submitWaitlistToApi(
   payload: WaitlistApiPayload,
 ): Promise<void> {
-  const res = await fetch(apiUrl('/waitlist'), {
+  const url = apiUrl('/waitlist')
+
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
